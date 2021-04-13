@@ -34,31 +34,31 @@ solveB inputs =
                     inputs
 
 
-count : List Int -> Int -> Int
-count nums c =
-    let
-        isEven num =
-            modBy 2 num == 0
-
-        divide2 =
-            List.map (\x -> x // 2)
-    in
-    if List.all isEven nums then
-        count (divide2 nums) c + 1
-
-    else
-        c
-
-
 solveC : List String -> String
 solveC inputs =
+    let
+        loop : List Int -> Int -> Int
+        loop nums c =
+            let
+                isEven num =
+                    modBy 2 num == 0
+
+                divide2 =
+                    List.map (\x -> x // 2)
+            in
+            if List.all isEven nums then
+                loop (divide2 nums) c + 1
+
+            else
+                c
+    in
     case inputs of
         _ :: numStrs :: [] ->
             let
                 nums =
                     List.filterMap String.toInt <| String.split " " numStrs
             in
-            String.fromInt <| count nums 0
+            String.fromInt <| loop nums 0
 
         _ ->
             "fail"
