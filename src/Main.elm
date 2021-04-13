@@ -114,11 +114,50 @@ solveE inputs =
             "fail"
 
 
+solveF : List String -> String
+solveF inputs =
+    case inputs of
+        _ :: aStrs :: [] ->
+            let
+                isEven num =
+                    modBy 2 num == 0
+
+                cards =
+                    (String.split " " >> List.filterMap String.toInt >> List.sort >> List.reverse >> List.indexedMap Tuple.pair) aStrs
+
+                aliceCard =
+                    cards
+                        |> List.filterMap
+                            (\( index, x ) ->
+                                if isEven index then
+                                    Just x
+
+                                else
+                                    Nothing
+                            )
+
+                bobCard =
+                    cards
+                        |> List.filterMap
+                            (\( index, x ) ->
+                                if not <| isEven index then
+                                    Just x
+
+                                else
+                                    Nothing
+                            )
+            in
+            String.fromInt <| List.sum aliceCard - List.sum bobCard
+
+        _ ->
+            "fail"
+
+
 main : Program (List String) Int msg
 main =
     Platform.worker
         -- ここをsolveAなど切り替える
-        { init = \inputs -> ( 0, submit <| solveE inputs )
+        { init = \inputs -> ( 0, submit <| solveF inputs )
         , update = \_ model -> ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         }
