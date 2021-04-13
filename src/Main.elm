@@ -81,11 +81,44 @@ solveD inputs =
             "fail"
 
 
+solveE : List String -> String
+solveE inputs =
+    let
+        sumDigit n =
+            String.fromInt n
+                |> String.toList
+                |> List.map String.fromChar
+                |> List.filterMap String.toInt
+                |> List.sum
+    in
+    case Maybe.map (String.split " " >> List.filterMap String.toInt) <| List.head inputs of
+        Just (n :: a :: b :: []) ->
+            String.fromInt <|
+                (List.range 1 n
+                    |> List.filterMap
+                        (\x ->
+                            let
+                                sum =
+                                    sumDigit x
+                            in
+                            if a <= sum && sum <= b then
+                                Just x
+
+                            else
+                                Nothing
+                        )
+                    |> List.sum
+                )
+
+        _ ->
+            "fail"
+
+
 main : Program (List String) Int msg
 main =
     Platform.worker
         -- ここをsolveAなど切り替える
-        { init = \inputs -> ( 0, submit <| solveD inputs )
+        { init = \inputs -> ( 0, submit <| solveE inputs )
         , update = \_ model -> ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         }
