@@ -122,6 +122,9 @@ solveF inputs =
                 isEven num =
                     modBy 2 num == 0
 
+                isOdd =
+                    not << isEven
+
                 cards =
                     (String.split " " >> List.filterMap String.toInt >> List.sort >> List.reverse >> List.indexedMap Tuple.pair) aStrs
 
@@ -140,7 +143,7 @@ solveF inputs =
                     cards
                         |> List.filterMap
                             (\( index, x ) ->
-                                if not <| isEven index then
+                                if isOdd index then
                                     Just x
 
                                 else
