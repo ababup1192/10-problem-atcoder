@@ -198,12 +198,7 @@ solveH inputs =
                                 )
                         )
             in
-            case candidateAnswer of
-                Just answer ->
-                    answer
-
-                Nothing ->
-                    "-1 -1 -1"
+            Maybe.withDefault "-1 -1 -1" candidateAnswer
 
         _ ->
             "fail"
