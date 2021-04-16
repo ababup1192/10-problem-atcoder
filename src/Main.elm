@@ -256,11 +256,58 @@ solveI inputs =
             "fail"
 
 
+solveJ : List String -> String
+solveJ inputs =
+    case inputs of
+        _ :: rest ->
+            let
+                txys =
+                    rest |> List.map (String.split " " >> List.filterMap String.toInt)
+
+                loop : List (List Int) -> Bool
+                loop txyss =
+                    case txyss of
+                        crnt :: next :: txyRest ->
+                            case ( crnt, next ) of
+                                ( crntT :: crntX :: crntY :: [], nextT :: nextX :: nextY :: [] ) ->
+                                    let
+                                        dt =
+                                            nextT - crntT
+
+                                        dist =
+                                            abs (nextX - crntX) + abs (nextY - crntY)
+                                    in
+                                    if dt >= dist && (modBy 2 dist == modBy 2 dt) then
+                                        if List.isEmpty txyRest then
+                                            True
+
+                                        else
+                                            loop (next :: txyRest)
+
+                                    else
+                                        False
+
+                                _ ->
+                                    False
+
+                        _ ->
+                            False
+            in
+            if loop ([ 0, 0, 0 ] :: txys) then
+                "Yes"
+
+            else
+                "No"
+
+        _ ->
+            "fail"
+
+
 main : Program (List String) Int msg
 main =
     Platform.worker
         -- ここをsolveAなど切り替える
-        { init = \inputs -> ( 0, submit <| solveI inputs )
+        { init = \inputs -> ( 0, submit <| solveJ inputs )
         , update = \_ model -> ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         }

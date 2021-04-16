@@ -1,7 +1,7 @@
 module MainTests exposing (tests)
 
 import Expect
-import Main exposing (solveA, solveB, solveC, solveD, solveE, solveF, solveG, solveH, solveI)
+import Main exposing (solveA, solveB, solveC, solveD, solveE, solveF, solveG, solveH, solveI, solveJ)
 import Test exposing (Test, describe, test)
 
 
@@ -153,5 +153,22 @@ tests =
                     [ "dreamerer" ]
                         |> solveI
                         |> Expect.equal "NO"
+            ]
+        , describe "solveJ"
+            [ test "case1" <|
+                \_ ->
+                    [ "2", "3 1 2", "6 1 1" ]
+                        |> solveJ
+                        |> Expect.equal "Yes"
+            , test "case2" <|
+                \_ ->
+                    [ "1", "2 100 100" ]
+                        |> solveJ
+                        |> Expect.equal "No"
+            , test "case3" <|
+                \_ ->
+                    [ "2", "5 1 1", "100 1 1" ]
+                        |> solveJ
+                        |> Expect.equal "No"
             ]
         ]
