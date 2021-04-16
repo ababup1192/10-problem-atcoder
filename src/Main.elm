@@ -1,5 +1,6 @@
 port module Main exposing (..)
 
+import Html exposing (a)
 import List.Extra as List
 import Platform exposing (Program)
 import Set
@@ -204,11 +205,62 @@ solveH inputs =
             "fail"
 
 
+solveI : List String -> String
+solveI inputs =
+    let
+        divide =
+            [ "dream", "dreamer", "erase", "eraser" ] |> List.map String.reverse
+
+        loop : String -> Bool
+        loop str =
+            let
+                dd =
+                    divide
+                        |> List.filterMap
+                            (\d ->
+                                let
+                                    subStr =
+                                        String.slice 0 (String.length d) str
+                                in
+                                if subStr == d then
+                                    Just d
+
+                                else
+                                    Nothing
+                            )
+            in
+            case dd of
+                d :: [] ->
+                    let
+                        rest =
+                            (String.slice (String.length d) <| String.length str) str
+                    in
+                    if String.length rest == 0 then
+                        True
+
+                    else
+                        loop rest
+
+                _ ->
+                    False
+    in
+    case List.head inputs of
+        Just s ->
+            if loop <| String.reverse s then
+                "YES"
+
+            else
+                "NO"
+
+        Nothing ->
+            "fail"
+
+
 main : Program (List String) Int msg
 main =
     Platform.worker
         -- ここをsolveAなど切り替える
-        { init = \inputs -> ( 0, submit <| solveH inputs )
+        { init = \inputs -> ( 0, submit <| solveI inputs )
         , update = \_ model -> ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         }
