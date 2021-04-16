@@ -2,6 +2,7 @@ port module Main exposing (..)
 
 import List.Extra as List
 import Platform exposing (Program)
+import Set
 
 
 port submit : String -> Cmd msg
@@ -156,11 +157,63 @@ solveF inputs =
             "fail"
 
 
+solveG : List String -> String
+solveG inputs =
+    case inputs of
+        _ :: numStrs ->
+            let
+                nums =
+                    numStrs |> List.filterMap String.toInt
+            in
+            String.fromInt <| Set.size <| Set.fromList nums
+
+        _ ->
+            "fail"
+
+
+solveH : List String -> String
+solveH inputs =
+    case Maybe.map (String.split " " >> List.filterMap String.toInt) <| List.head inputs of
+        Just (n :: y :: []) ->
+            let
+                candidateAnswer =
+                    List.head <|
+                        (List.range 0 n
+                            |> List.concatMap
+                                (\manN ->
+                                    List.range 0 (n - manN)
+                                        |> List.filterMap
+                                            (\gosenN ->
+                                                if y == manN * 10000 + gosenN * 5000 + (n - manN - gosenN) * 1000 then
+                                                    Just <|
+                                                        String.fromInt manN
+                                                            ++ " "
+                                                            ++ String.fromInt gosenN
+                                                            ++ " "
+                                                            ++ String.fromInt (n - manN - gosenN)
+
+                                                else
+                                                    Nothing
+                                            )
+                                )
+                        )
+            in
+            case candidateAnswer of
+                Just answer ->
+                    answer
+
+                Nothing ->
+                    "-1 -1 -1"
+
+        _ ->
+            "fail"
+
+
 main : Program (List String) Int msg
 main =
     Platform.worker
         -- ここをsolveAなど切り替える
-        { init = \inputs -> ( 0, submit <| solveF inputs )
+        { init = \inputs -> ( 0, submit <| solveH inputs )
         , update = \_ model -> ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         }
